@@ -3,8 +3,9 @@ import time
 import socket
 import queue
 import threading
+from mechanics import Mechanics
 
-def connect_to_PiCar_server(input_queu):
+def connect_to_PiCar_server(input_queue):
     host = '192.168.43.203'  # Replace SERVER_IP with the server's IP address
     port = 12345     # Port number must match the server's port
 
@@ -12,7 +13,7 @@ def connect_to_PiCar_server(input_queu):
         s.connect((host, port))
         while True:
             #TODO changer pour prendre les valeurs du fpga
-            value = input("give input : ")
+            value =  input_queue.get()
             s.sendall(value.encode())
             data = s.recv(1024)
             print(f"Received: {data.decode()}")
@@ -22,11 +23,6 @@ def connect_to_PiCar_server(input_queu):
 def stuff(input_queue):
     arduino = serial.Serial('/dev/ttyUSB0', 9600)
     time.sleep(2)
-    server_ip = '192.168.2.99'
-    server_port = 42069
-    buffer_size = 1024
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect((server_ip, server_port))
     data_package = []
     counter = 1
 
@@ -42,24 +38,36 @@ def stuff(input_queue):
                     print(data_package)
 
                     if len(data_package) >= 10:
-                        message = ','.join(data_package)
-                        sock.sendall(str(message).encode('utf-8'))
-                        print("Finished making package : ", counter)
-                        counter += 1
+                        command = False
+                        for dat in data_package:
+                            if dat > 1000:
+                                command = True
+                        if command: 
+                            input_queue.put('w')
+                            print("spike detected!")
+                            
                         data_package = []
-                        response = sock.recv(buffer_size).decode('utf-8')
-                        print(f"response from FPGA : {response}")
+
     finally:
         data = None
         message = None
         data_package = []
-        response = None
-        sock.close()
-            
+
+def main():
+    print("BEGIN")
+    while True:
+        print("big while")
+        mechanics = Mechanics()
+        mechanics.stop_now()
+
+        input_queue = queue.Queue()
+        lecture_thread = threading.Thread(target=stuff, args=(input_queue,), daemon=True)
+        lecture_thread.start()
+        
+        connect_to_PiCar_server(input_queue)
+        lecture_thread.join()
+    print("END")
+
+
 if __name__ == "__main__":
-
-    input_queue = queue.Queue()
-    fpga_thread = threading.Thread(target=stuff(input_queue), args=(input_queue,), daemon=True)
-    fpga_thread.start()
-
-    connect_to_PiCar_server(input_queue)
+    main()
