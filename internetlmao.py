@@ -1,10 +1,9 @@
 import socket
-import time
-import serial
 
-def connect_to_PiCar_server():
+def connect_to_server():
     host = '192.168.43.203'  # Replace SERVER_IP with the server's IP address
     port = 12345     # Port number must match the server's port
+
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((host, port))
         while True:
@@ -17,4 +16,4 @@ def connect_to_PiCar_server():
                 break
             
 if __name__ == "__main__":
-    connect_to_PiCar_server()
+    connect_to_server()
