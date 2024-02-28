@@ -11,6 +11,7 @@ def connect_to_PiCar_server(input_queu):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((host, port))
         while True:
+            #TODO changer pour prendre les valeurs du fpga
             value = input("give input : ")
             s.sendall(value.encode())
             data = s.recv(1024)
@@ -56,8 +57,9 @@ def stuff():
         sock.close()
             
 if __name__ == "__main__":
-    input_queue = queue.Queue()
-    PiCar_thread = threading.Thread(target=connect_to_PiCar_server, args=(input_queue,), daemon=True)
-    PiCar_thread.start()
 
-    data_thread
+    input_queue = queue.Queue()
+    fpga_thread = threading.Thread(target=stuff(input_queue), args=(input_queue,), daemon=True)
+    fpga_thread.start()
+
+    connect_to_PiCar_server(input_queue)
