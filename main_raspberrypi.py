@@ -39,6 +39,9 @@ try:
                     data_package = []
                     response = sock.recv(buffer_size).decode('utf-8')
                     print(f"response from FPGA : {response}")
+        else:
+            time.sleep(0.6)
+            print('waiting for arduino')
 finally:
     data = None
     message = None
