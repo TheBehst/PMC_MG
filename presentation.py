@@ -3,14 +3,14 @@ import time
 import socket
 import queue
 import threading
-from mechanics import Mechanics
 
 def connect_to_PiCar_server(input_queue):
-    host = '192.168.43.203'  # Replace SERVER_IP with the server's IP address
+    host = '192.168.86.255'  # Replace SERVER_IP with the server's IP address
     port = 12345     # Port number must match the server's port
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((host, port))
+        print("connected!")
         while True:
             #TODO changer pour prendre les valeurs du fpga
             value =  input_queue.get()
@@ -57,8 +57,6 @@ def main():
     print("BEGIN")
     while True:
         print("big while")
-        mechanics = Mechanics()
-        mechanics.stop_now()
 
         input_queue = queue.Queue()
         lecture_thread = threading.Thread(target=stuff, args=(input_queue,), daemon=True)

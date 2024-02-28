@@ -1,7 +1,7 @@
 import socket
 
 def connect_to_server():
-    host = '192.168.43.203'  # Replace SERVER_IP with the server's IP address
+    host = '192.168.86.243'   # Replace SERVER_IP with the server's IP address
     port = 12345     # Port number must match the server's port
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
