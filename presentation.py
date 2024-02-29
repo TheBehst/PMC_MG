@@ -3,25 +3,31 @@ import time
 import socket
 import queue
 import threading
-from mechanics import Mechanics
 
 def connect_to_PiCar_server(input_queue):
-    host = '192.168.43.203'  # Replace SERVER_IP with the server's IP address
+    host = '192.168.86.243'  # Replace SERVER_IP with the server's IP address
     port = 12345     # Port number must match the server's port
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((host, port))
+        print("connected!")
         while True:
             #TODO changer pour prendre les valeurs du fpga
-            value =  input_queue.get()
-            s.sendall(value.encode())
-            data = s.recv(1024)
-            print(f"Received: {data.decode()}")
-            if data.decode() == "server byebye":
-                print("server said byebye")
-                break
+            if input_queue.qsize() >= 1:
+                print("something in Q")
+                value =  input_queue.get()
+                print(f"sending {value}")
+                s.sendall(value.encode())
+                
+                data = s.recv(1024)
+                print(f"Received: {data.decode()}")
+                time.sleep(4)
+                if data.decode() == "server byebye":
+                    print("server said byebye")
+                    break
+
 def stuff(input_queue):
-    arduino = serial.Serial('/dev/ttyUSB0', 9600)
+    arduino = serial.Serial('/dev/ttyUSB0', 19200)
     time.sleep(2)
     data_package = []
     counter = 1
@@ -35,18 +41,21 @@ def stuff(input_queue):
                 if raw_data:
                     data = arduino.readline().decode('utf-8').rstrip()
                     data_package.append(data)
-                    print(data_package)
-
-                    if len(data_package) >= 10:
+                    
+                    if len(data_package) >= 20:
+                        print("PACKAGE: ")
+                        print(data_package)
                         command = False
                         for dat in data_package:
-                            if dat > 1000:
+                            if int(dat) > 1000:
                                 command = True
                         if command: 
                             input_queue.put('w')
                             print("spike detected!")
+                            time.sleep(1)
                             
                         data_package = []
+                        
 
     finally:
         data = None
@@ -57,8 +66,6 @@ def main():
     print("BEGIN")
     while True:
         print("big while")
-        mechanics = Mechanics()
-        mechanics.stop_now()
 
         input_queue = queue.Queue()
         lecture_thread = threading.Thread(target=stuff, args=(input_queue,), daemon=True)

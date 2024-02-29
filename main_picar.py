@@ -52,7 +52,9 @@ def control_PiCar(input_queue, mechanics):
             
             elif input_str == 'w':
                 print("forward")
-                if mechanics.direction == 1:
+                if mechanics.direction == 1 and mechanics.current_speed != 0:
+                    mechanics.stop_now()
+                elif mechanics.direction == 1 :
                     mechanics.go_now()
                 elif mechanics.current_speed != 0:
                     mechanics.stop_now()
