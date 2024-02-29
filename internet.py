@@ -1,8 +1,7 @@
 import socket
 
-def connect_to_server():
-    host = '192.168.86.243'   # Replace SERVER_IP with the server's IP address
-    port = 12345     # Port number must match the server's port
+def connect_to_server(ip, port):
+    host = ip   # Replace SERVER_IP with the server's IP address
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((host, port))
@@ -14,6 +13,3 @@ def connect_to_server():
             if data.decode() == "server byebye":
                 print("server said byebye")
                 break
-            
-if __name__ == "__main__":
-    connect_to_server()

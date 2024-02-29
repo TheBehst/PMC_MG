@@ -3,7 +3,7 @@ import queue
 import time
 import socket
 import serial
-from mechanics import Mechanics
+from PiCar.mechanics import Mechanics
 
 def start_PiCar_server(input_queue):
     host = '0.0.0.0'
