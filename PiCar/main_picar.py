@@ -4,36 +4,37 @@ import time
 import socket
 import serial
 from PiCar.mechanics import Mechanics
+from ..internet import InternetSocket
 
 def start_PiCar_server(input_queue):
     host = '0.0.0.0'
     port = 12345
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        try:
-            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            s.bind((host, port))
-            s.listen()
+    try:
+        s = InternetSocket.create_server(host, port)
         
-            print("server started")
-            
-            conn, addr = s.accept()
-            print("client connected")
-            data = ('lmao').encode()
-            with conn:
-                while data.decode() != 'q':
-                    data = conn.recv(1024)
-                    print(f"received: {data.decode()}")
-                    input_queue.put(data.decode())
-                    conn.sendall(data)
-                    time.sleep(0.1)
-                print("server byebye")
-                conn.sendall(("server byebye").encode())
-                    
-        except Exception as e:
-            print(e)
-            print("closing socket")
-            s.close()
-        input_queue.put('q')
+        
+        conn, addr = s.accept()
+        print("client connected")
+        data = ('lmao').encode()
+        with conn:
+            print ('Got connection from', addr)
+            while data.decode() != 'q':
+                data = conn.recv(1024)
+                print(f"received: {data.decode()}")
+                input_queue.put(data.decode())
+                conn.sendall(data)
+                time.sleep(0.1)
+            print("server byebye")
+            conn.sendall(("server byebye").encode())
+                
+    except Exception as e:
+        print(e)
+        print("closing socket")
+        s.close()
+    
+    finally:
+        s.close()
+    input_queue.put('q')
                 
 
 def control_PiCar(input_queue, mechanics):
@@ -52,9 +53,7 @@ def control_PiCar(input_queue, mechanics):
             
             elif input_str == 'w':
                 print("forward")
-                if mechanics.direction == 1 and mechanics.current_speed != 0:
-                    mechanics.stop_now()
-                elif mechanics.direction == 1 :
+                if mechanics.direction == 1 :
                     mechanics.go_now()
                 elif mechanics.current_speed != 0:
                     mechanics.stop_now()

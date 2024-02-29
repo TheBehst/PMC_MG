@@ -19,6 +19,7 @@ def connect_to_PiCar_server(input_queu):
             if data.decode() == "server byebye":
                 print("server said byebye")
                 break
+            
 def stuff(input_queue):
     arduino = serial.Serial('/dev/ttyUSB0', 9600)
     time.sleep(2)
