@@ -20,7 +20,7 @@ def connect_to_PiCar_server(input_queu):
                 print("server said byebye")
                 break
             
-def stuff(input_queue):
+def connect_Arduino_to_FPGA(input_queue):
     arduino = serial.Serial('/dev/ttyUSB0', 9600)
     time.sleep(2)
     server_ip = '192.168.2.99'
@@ -60,7 +60,7 @@ def stuff(input_queue):
 if __name__ == "__main__":
 
     input_queue = queue.Queue()
-    fpga_thread = threading.Thread(target=stuff(input_queue), args=(input_queue,), daemon=True)
+    fpga_thread = threading.Thread(target=connect_Arduino_to_FPGA(input_queue), args=(input_queue,), daemon=True)
     fpga_thread.start()
 
     connect_to_PiCar_server(input_queue)
