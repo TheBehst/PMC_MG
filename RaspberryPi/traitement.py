@@ -8,13 +8,15 @@ def detect_and_format_activity(emg_value, threshold=10, total_length=100):
 
     # Add the new value to the recent data
     recent_data.append(emg_value)
-
+    print(f"new traitement value: {emg_value}")
     # Check for muscle activity detection logic
-    if not activity_detected and len(recent_data) > 10:
+    if not activity_detected and len(recent_data) == 10:
         # Calculate the mean of the last 10 values
-        mean_of_last_10 = sum(recent_data[-11:-1]) / 10
+        mean_of_last_10 = sum(recent_data[0:-1]) / 10
+        
         if abs(emg_value - mean_of_last_10) > threshold:
             activity_detected = True
+            print(f"spike detected at value: {emg_value}")
             # Include the triggering value as the first of the post-activity values
             post_activity_data.append(emg_value)
 
