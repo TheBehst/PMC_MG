@@ -70,7 +70,7 @@ def connect_Arduino_to_FPGAtest(input_queue):
     # sock.connect((server_ip, server_port))
     counter = 1
     t = np.arange(0, 100)
-
+    preprocessor = Preprocess(threshold = 15)
     try:
         while True:
 
@@ -80,7 +80,9 @@ def connect_Arduino_to_FPGAtest(input_queue):
                 if raw_data:
                     emg_data = int(arduino.readline().decode('utf-8').rstrip())
                     print(emg_data)
-                    data_package = detect_and_format_activity(emg_data, threshold=350)
+                    preprocessor.detect_format_activity(emg_data)
+                    data_package = preprocessor.formatted_data
+                    #data_package = detect_and_format_activity(emg_data, threshold=350)
                     #data_package.append(data)
                     # print(data_package)
 
