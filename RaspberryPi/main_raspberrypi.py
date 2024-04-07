@@ -105,6 +105,36 @@ def connect_Arduino_to_FPGAtest(input_queue):
         data_package = []
         response = None
         # sock.close()
+
+def connect_Arduino_to_FPGAtestread(input_queue):
+    arduino = serial.Serial('/dev/ttyUSB0', 19200)
+    time.sleep(2)
+    # server_ip = '192.168.2.99'
+    # server_port = 42069
+    # buffer_size = 1024
+    # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # sock.connect((server_ip, server_port))
+    counter = 1
+    t = np.arange(0, 100)
+    preprocessor = Preprocess(threshold = 15)
+    try:
+        while True:
+
+            if arduino.in_waiting > 0:
+                raw_data = arduino.readline()
+
+                if raw_data:
+                    emg_data = int(arduino.readline().decode('utf-8').rstrip())
+                    print(f"data from arduino : {emg_data}")
+                    #preprocessor.detect_format_activity(emg_data)
+                    #data_package = preprocessor.formatted_data
+
+    finally:
+        data = None
+        message = None
+        data_package = []
+        response = None
+        # sock.close()
 def connect_Arduino_to_FPGAtestpres(input_queue):
     # arduino = serial.Serial('/dev/ttyUSB0', 9600)
     # time.sleep(2)
@@ -166,7 +196,7 @@ def connect_Arduino_to_FPGAtestpres(input_queue):
 if __name__ == "__main__":
 
     input_queue = queue.Queue()
-    fpga_thread = threading.Thread(target=connect_Arduino_to_FPGAtest(input_queue), args=(input_queue,), daemon=True)
+    fpga_thread = threading.Thread(target=connect_Arduino_to_FPGAtestread(input_queue), args=(input_queue,), daemon=True)
     fpga_thread.start()
 
     # connect_to_PiCar_server(input_queue)
