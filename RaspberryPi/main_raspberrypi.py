@@ -103,7 +103,64 @@ def connect_Arduino_to_FPGAtest(input_queue):
         data_package = []
         response = None
         # sock.close()
+def connect_Arduino_to_FPGAtestpres(input_queue):
+    # arduino = serial.Serial('/dev/ttyUSB0', 9600)
+    # time.sleep(2)
+    # server_ip = '192.168.2.99'
+    # server_port = 42069
+    # buffer_size = 1024
+    # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # sock.connect((server_ip, server_port))
+    counter = 1
+    t = np.arange(0, 1000, 10)
+    with open('Data/test.txt', 'r') as file:
+        # Read the file's contents and split into a list, one element per line
+        data_list = file.read().splitlines()
+
+    preprocessor = Preprocess(threshold = 15)
+    try:
+        #while True:
+
+        # if arduino.in_waiting > 0:
+        #     raw_data = arduino.readline()
+        plt.figure()
+        t_list = [10*e for e in [np.arange(0, len(data_list))]]
+        data_list = [int(element) for element in data_list]
+        print(data_list)
+        plt.plot(t_list[0], data_list)
+        plt.xlabel("time(ms)")
+        plt.ylabel("EMG value")
+        plt.grid(True)
+        plt.title("Original data")
+        plt.show()
+        for data in data_list:
+            # emg_data = int(arduino.readline().decode('utf-8').rstrip())
+            # print(emg_data)
+            preprocessor.detect_format_activity(data)
+            data_package = preprocessor.formatted_data
+            #data_package.append(data)
+            # print(data_package)
             
+            if data_package is not None:
+                with open(f"Data/saveData{counter}.txt", "w") as file:
+                    for item in data_package:
+                        file.write(f"{item}\n")
+                plt.figure()
+                plt.plot(t, data_package)
+                plt.xlabel("time(ms)")
+                plt.ylabel("EMG value")
+                plt.title("Spike data")
+                plt.grid(True)
+                plt.show()
+                counter += 1
+                preprocessor.formatted_data = None
+                        
+    finally:
+        data = None
+        message = None
+        data_package = []
+        response = None
+        # sock.close()
 if __name__ == "__main__":
 
     input_queue = queue.Queue()
