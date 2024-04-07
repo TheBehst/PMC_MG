@@ -61,7 +61,7 @@ def connect_Arduino_to_FPGA(input_queue):
         sock.close()
 
 def connect_Arduino_to_FPGAtest(input_queue):
-    arduino = serial.Serial('/dev/ttyUSB0', 9600)
+    arduino = serial.Serial('/dev/ttyUSB0', 19200)
     time.sleep(2)
     # server_ip = '192.168.2.99'
     # server_port = 42069
@@ -79,7 +79,7 @@ def connect_Arduino_to_FPGAtest(input_queue):
 
                 if raw_data:
                     emg_data = int(arduino.readline().decode('utf-8').rstrip())
-                    print(emg_data)
+                    print(f"data from arduino : {emg_data}")
                     preprocessor.detect_format_activity(emg_data)
                     data_package = preprocessor.formatted_data
                     #data_package = detect_and_format_activity(emg_data, threshold=350)
@@ -128,7 +128,7 @@ def connect_Arduino_to_FPGAtestpres(input_queue):
         plt.figure()
         t_list = [10*e for e in [np.arange(0, len(data_list))]]
         data_list = [int(element) for element in data_list]
-        print(data_list)
+        #print(data_list)
         plt.plot(t_list[0], data_list)
         plt.xlabel("time(ms)")
         plt.ylabel("EMG value")

@@ -24,7 +24,7 @@
 
 void setup() 
 {
-  Serial.begin(9600);
+  Serial.begin(19200);
   //while (!Serial); // optionally wait for serial terminal to open
   //Serial.println("MyoWare Example_01_analogRead_SINGLE");
 }
@@ -35,5 +35,5 @@ void loop()
 
   Serial.println(sensorValue); // print out the value you read
 
-  delay(100); // to avoid overloading the serial terminal
+  delay(10); // to avoid overloading the serial terminal
 }

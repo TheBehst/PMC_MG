@@ -13,14 +13,14 @@ class Preprocess:
         self.post_activity_data = []
 
     def detect_format_activity(self, data):
-        if data == 49:
-            pass
+        # if data == 49:
+        #     pass
         if not self.activity_detected:
             self.recent_data.append(data)
         if not self.activity_detected and len(self.recent_data)>=2:
             # Calculate the mean of the last 10 values
-            mean_of_last_2 = np.mean(self.recent_data[-2:-1])
-            print(mean_of_last_2)
+            mean_of_last_2 = int(np.mean(self.recent_data[-2:-1]))
+            print(f"average of last 2: {mean_of_last_2}")
         
             if abs(data - mean_of_last_2) > self.threshold:
                 self.activity_detected = True
