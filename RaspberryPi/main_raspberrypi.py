@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from traitement import *
 DEVICE = "PC"
-FENETRAGE = True
+FENETRAGE = False
+baud_rate = 19200
 def connect_to_PiCar_server(input_queu):
     host = '192.168.43.203'  # Replace SERVER_IP with the server's IP address
     port = 12345     # Port number must match the server's port
@@ -62,8 +63,6 @@ def connect_Arduino_to_FPGA(input_queue):
         sock.close()
 
 def connect_to_Arduino():
-    baud_rate = 19200
-
     if DEVICE == "PI":
         connection = serial.Serial('/dev/ttyUSB0', baud_rate)
         time.sleep(2)
@@ -95,12 +94,9 @@ def connect_Arduino_to_FPGAtest(input_queue):
                         data_package = preprocessor.formatted_data
 
                         if data_package is not None:
-                            with open(f"Data/testData{counter}.txt", "w") as file:
+                            with open(f"RaspberryPi/Data/testData{counter}.txt", "w") as file:
                                 for item in data_package:
-                                    file.write(f"{item}")
-                            # with open(f"PMC_MG/RaspberryPi/SpikeData/testData{counter}.txt", "w") as file:
-                            #     for item in data_package:
-                            #         file.write(f"{item}")
+                                    file.write(f"{item}\n")
                             counter += 1
 
                             plt.figure()
