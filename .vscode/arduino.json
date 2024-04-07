@@ -1,0 +1,6 @@
+{
+    "port": "COM4",
+    "board": "arduino:avr:uno",
+    "programmer": "usbasp",
+    "sketch": "Example_01_analogRead_SINGLE\\Example_01_analogRead_SINGLE.ino"
+}

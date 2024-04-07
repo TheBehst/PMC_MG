@@ -6,7 +6,8 @@ import threading
 import matplotlib.pyplot as plt 
 import numpy as np
 from traitement import *
-
+DEVICE = "PC"
+FENETRAGE = True
 def connect_to_PiCar_server(input_queu):
     host = '192.168.43.203'  # Replace SERVER_IP with the server's IP address
     port = 12345     # Port number must match the server's port
@@ -60,50 +61,61 @@ def connect_Arduino_to_FPGA(input_queue):
         response = None
         sock.close()
 
+def connect_to_Arduino():
+    baud_rate = 19200
+
+    if DEVICE == "PI":
+        connection = serial.Serial('/dev/ttyUSB0', baud_rate)
+        time.sleep(2)
+    elif DEVICE == "PC":
+        serial_port = 'COM5'
+        connection = serial.Serial(serial_port, baud_rate)
+        time.sleep(2)
+
+    return connection
+
 def connect_Arduino_to_FPGAtest(input_queue):
-    arduino = serial.Serial('/dev/ttyUSB0', 19200)
-    time.sleep(2)
-    # server_ip = '192.168.2.99'
-    # server_port = 42069
-    # buffer_size = 1024
-    # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # sock.connect((server_ip, server_port))
+    arduino_connection = connect_to_Arduino()
     counter = 1
     t = np.arange(0, 100)
     preprocessor = Preprocess(threshold = 15)
+
     try:
         while True:
 
-            if arduino.in_waiting > 0:
-                raw_data = arduino.readline()
+            if arduino_connection.in_waiting > 0:
+                raw_data = arduino_connection.readline()
 
                 if raw_data:
-                    emg_data = int(arduino.readline().decode('utf-8').rstrip())
+                    emg_data = int(arduino_connection.readline().decode('utf-8').rstrip())
                     print(f"data from arduino : {emg_data}")
-                    preprocessor.detect_format_activity(emg_data)
-                    data_package = preprocessor.formatted_data
-                    #data_package = detect_and_format_activity(emg_data, threshold=350)
-                    #data_package.append(data)
-                    # print(data_package)
 
-                    if data_package is not None:
-                        with open(f"PMC_MG/RaspberryPi/SpikeData/testData{counter}.txt", "w") as file:
-                            for item in data_package:
-                                file.write(f"{item}")
-                        counter += 1
+                    if FENETRAGE:
+                        preprocessor.detect_format_activity(emg_data)
+                        data_package = preprocessor.formatted_data
 
-                        plt.figure()
-                        plt.plot(t, data_package)
-                        plt.xlabel("time")
-                        plt.ylabel("EMG value")
-                        plt.grid(True)
-                        plt.show()
+                        if data_package is not None:
+                            with open(f"Data/testData{counter}.txt", "w") as file:
+                                for item in data_package:
+                                    file.write(f"{item}")
+                            # with open(f"PMC_MG/RaspberryPi/SpikeData/testData{counter}.txt", "w") as file:
+                            #     for item in data_package:
+                            #         file.write(f"{item}")
+                            counter += 1
+
+                            plt.figure()
+                            plt.plot(t, data_package)
+                            plt.xlabel("time")
+                            plt.ylabel("EMG value")
+                            plt.grid(True)
+                            plt.show()
                         
     finally:
         data = None
         message = None
         data_package = []
         response = None
+        arduino_connection.close()
         # sock.close()
 
 def connect_Arduino_to_FPGAtestread(input_queue):
@@ -196,7 +208,7 @@ def connect_Arduino_to_FPGAtestpres(input_queue):
 if __name__ == "__main__":
 
     input_queue = queue.Queue()
-    fpga_thread = threading.Thread(target=connect_Arduino_to_FPGAtestread(input_queue), args=(input_queue,), daemon=True)
+    fpga_thread = threading.Thread(target=connect_Arduino_to_FPGAtest(input_queue), args=(input_queue,), daemon=True)
     fpga_thread.start()
 
     # connect_to_PiCar_server(input_queue)
