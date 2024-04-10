@@ -31,7 +31,7 @@ void setup()
 
 void loop() 
 {  
-  int sensorValue = analogRead(A2); // read the input on analog pin A0
+  int sensorValue = analogRead(A0); // read the input on analog pin A0
 
   Serial.println(sensorValue); // print out the value you read
 

@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from traitement import *
 DEVICE = "PC"
-FENETRAGE = False
+FENETRAGE = True
 baud_rate = 19200
 def connect_to_PiCar_server(input_queu):
     host = '192.168.43.203'  # Replace SERVER_IP with the server's IP address
@@ -105,6 +105,7 @@ def connect_Arduino_to_FPGAtest(input_queue):
                             plt.ylabel("EMG value")
                             plt.grid(True)
                             plt.show()
+                            preprocessor.formatted_data = None
                         
     finally:
         data = None
@@ -153,7 +154,7 @@ def connect_Arduino_to_FPGAtestpres(input_queue):
     # sock.connect((server_ip, server_port))
     counter = 1
     t = np.arange(0, 1000, 10)
-    with open('Data/test.txt', 'r') as file:
+    with open('RaspberryPi/behrouz.txt', 'r') as file:
         # Read the file's contents and split into a list, one element per line
         data_list = file.read().splitlines()
 
@@ -182,7 +183,7 @@ def connect_Arduino_to_FPGAtestpres(input_queue):
             # print(data_package)
             
             if data_package is not None:
-                with open(f"Data/saveData{counter}.txt", "w") as file:
+                with open(f"RaspberryPi/Data/behrouzData{counter}.txt", "w") as file:
                     for item in data_package:
                         file.write(f"{item}\n")
                 plt.figure()
@@ -204,7 +205,7 @@ def connect_Arduino_to_FPGAtestpres(input_queue):
 if __name__ == "__main__":
 
     input_queue = queue.Queue()
-    fpga_thread = threading.Thread(target=connect_Arduino_to_FPGAtest(input_queue), args=(input_queue,), daemon=True)
+    fpga_thread = threading.Thread(target=connect_Arduino_to_FPGAtestpres(input_queue), args=(input_queue,), daemon=True)
     fpga_thread.start()
 
     # connect_to_PiCar_server(input_queue)
