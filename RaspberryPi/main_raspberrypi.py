@@ -29,7 +29,7 @@ def connect_to_PiCar_server(input_queu):
                 break
             
 def connect_Arduino_to_FPGA(input_queue):
-    arduino = serial.Serial('/dev/ttyUSB0', 9600)
+    arduino_connection = connect_to_Arduino()
     time.sleep(2)
     server_ip = '192.168.2.99'
     server_port = 42069
@@ -37,27 +37,29 @@ def connect_Arduino_to_FPGA(input_queue):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect((server_ip, server_port))
     counter = 1
-
+    preprocessor = Preprocess(threshold = 15)
     try:
         while True:
 
-            if arduino.in_waiting > 0:
-                raw_data = arduino.readline()
+            if arduino_connection.in_waiting > 0:
+                raw_data = arduino_connection.readline()
 
                 if raw_data:
-                    emg_data = int(arduino.readline().decode('utf-8').rstrip())
-                    data_package = detect_and_format_activity(emg_data, threshold=80)
-                    #data_package.append(data)
-                    print(data_package)
-
-                    if data_package is not None:
-                        message = ','.join(map(str, data_package))
-                        sock.sendall(str(message).encode('utf-8'))
-                        print("Finished making package : ", counter)
-                        counter += 1
-                        data_package = []
-                        response = sock.recv(buffer_size).decode('utf-8')
-                        print(f"response from FPGA : {response}")
+                    emg_data = int(arduino_connection.readline().decode('utf-8').rstrip())
+                    print(f"data from arduino : {emg_data}")
+                    if FENETRAGE:
+                        preprocessor.detect_format_activity(emg_data)
+                        data_package = preprocessor.formatted_data
+                        print(data_package)
+                        
+                        if data_package is not None:
+                            message = ','.join(map(str, data_package))
+                            sock.sendall(str(message).encode('utf-8'))
+                            print("Finished making package : ", counter)
+                            counter += 1
+                            data_package = []
+                            response = sock.recv(buffer_size).decode('utf-8')
+                            print(f"response from FPGA : {response}")
     finally:
         data = None
         message = None
@@ -118,7 +120,7 @@ def connect_Arduino_to_read(input_queue):
         arduino_connection.close()
         # sock.close()
 
-def connect_Arduino_to_FPGAtestpres(input_queue):
+def process_saved_data(input_queue):
     # arduino = serial.Serial('/dev/ttyUSB0', 9600)
     # time.sleep(2)
     # server_ip = '192.168.2.99'
@@ -155,9 +157,10 @@ def connect_Arduino_to_FPGAtestpres(input_queue):
             data_package = preprocessor.formatted_data
             #data_package.append(data)
             # print(data_package)
-            
+            datafile = f"RaspberryPi/Data/behrouzData{counter}.txt"
+
             if data_package is not None:
-                with open(f"RaspberryPi/Data/behrouzData{counter}.txt", "w") as file:
+                with open(datafile, "w") as file:
                     for item in data_package:
                         file.write(f"{item}\n")
                 plt.figure()
