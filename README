@@ -1,13 +1,13 @@
-| Outils                    | Description                                                                                  | Version            |
-|---------------------------|----------------------------------------------------------------------------------------------|--------------------|
-| Raspberry Pi              | Traitement des signaux EMG et communication avec les autres modules                          | Pi 4 Model B 2018  |
-| Raspberry Pi OS           | Système d'opération pour travailler sur le Raspberry Pi                                      | 1.8.5              |
-| Python                    | Logicielle utilisé pour l'analyseur syntaxique                                               | 3.7.8              |
-| matplotlib                | Librairie Python                                                                             | 3.8.2              |
-| numpy                     | Librairie Python                                                                             | 1.24.3             |
-| pyserial                  | Librairie Python                                                                             | 3.5                |
-| MyoWare Muscle Sensor     | Capteurs EMG                                                                                 | 2                  |
-| MyoWare Link Shield       | Protection de la connection des capteurs aux Arduino                                         | 2                  |
-| MyoWare 2.0 Arduino Shield| Permet de connecter jusqu'à six capteurs musculaires au Arduino                              | 2                  |
-| MyoWare Cable Shield      | Permet de connecter jusqu'à six capteurs musculaires au Arduino                              | 2                  |
+| Outils                    | Description                                                               | Version            |
+|---------------------------|---------------------------------------------------------------------------|--------------------|
+| Raspberry Pi              | Traitement des signaux EMG et communication avec les autres modules       | Pi 4 Model B 2018  |
+| Raspberry Pi OS           | Système d'opération pour travailler sur le Raspberry Pi                   | 1.8.5              |
+| Python                    | Logicielle utilisé pour l'analyseur syntaxique                            | 3.7.8              |
+| matplotlib                | Librairie Python                                                          | 3.8.2              |
+| numpy                     | Librairie Python                                                          | 1.24.3             |
+| pyserial                  | Librairie Python                                                          | 3.5                |
+| MyoWare Muscle Sensor     | Capteurs EMG                                                              | 2                  |
+| MyoWare Link Shield       | Protection de la connection des capteurs aux Arduino                      | 2                  |
+| MyoWare 2.0 Arduino Shield| Permet de connecter jusqu'à six capteurs musculaires au Arduino           | 2                  |
+| MyoWare Cable Shield      | Permet de connecter jusqu'à six capteurs musculaires au Arduino           | 2                  |
 | Arduino UNO               | Réception et numérisation des données EMG des capteurs pour communiquer avec le Raspberry Pi | Custom             |
